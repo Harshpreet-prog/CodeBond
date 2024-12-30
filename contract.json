@@ -1,0 +1,319 @@
+{
+    "project": {
+      "name": "Project Management Tool",
+      "description": "A comprehensive project management tool designed to help teams efficiently manage tasks, track progress, and collaborate in real-time. This tool is inspired by popular tools like Jira and Trello, and will include features like task boards, task management, real-time updates, and user roles for effective team collaboration.",
+      "goals": [
+        "Build a fully functional frontend and backend for a project management tool.",
+        "Implement user authentication and authorization with role-based access control.",
+        "Create a user-friendly, Kanban-style board to organize and manage tasks.",
+        "Enable real-time updates and notifications to ensure timely collaboration.",
+        "Use Git for version control, following best practices to simulate a professional development environment."
+      ]
+    },
+    "functional_requirements": {
+      "authentication_and_authorization": {
+        "user_registration": {
+          "description": "Users should be able to sign up for an account by providing their email, username, and a secure password. The system will validate the email format and enforce password strength requirements.",
+          "fields": [
+            "email (valid email format)",
+            "username (unique, alphanumeric)",
+            "password (minimum 8 characters, including at least one number and one special character)"
+          ],
+          "validation": {
+            "email_format": "must be a valid email format (e.g., user@example.com)",
+            "password_strength": "must be at least 8 characters long, include numbers and special characters for security"
+          }
+        },
+        "login": {
+          "description": "Users will log in using their registered email and password. After successful authentication, a JSON Web Token (JWT) will be issued for session management.",
+          "fields": [
+            "email",
+            "password"
+          ],
+          "method": "JWT for session management, with expiration set to 24 hours"
+        },
+        "role_based_access_control": {
+          "description": "Users will have different levels of access based on their roles. Admins will have full access to manage boards, tasks, and users, while regular users can only interact with the boards and tasks assigned to them.",
+          "roles": [
+            {
+              "role": "admin",
+              "permissions": [
+                "Create, edit, and delete boards",
+                "Assign and remove users from boards",
+                "Modify board settings (visibility, task color-coding, column names)",
+                "View and manage all tasks across boards"
+              ]
+            },
+            {
+              "role": "user",
+              "permissions": [
+                "Create, edit, and track tasks",
+                "Move tasks between columns within boards",
+                "View tasks assigned to them"
+              ]
+            }
+          ]
+        },
+        "password_recovery": {
+          "description": "If a user forgets their password, they will be able to initiate a recovery process where a password reset link is sent to their registered email address.",
+          "method": "Email-based password reset with a temporary token"
+        },
+        "session_management": {
+          "description": "The system will use JWT for managing user sessions. Tokens will expire after 24 hours, and users will need to log in again to obtain a new token.",
+          "method": "JWT (JSON Web Token) with session expiration"
+        }
+      },
+      "boards": {
+        "create_boards": {
+          "description": "Users, specifically admins, should be able to create new boards to manage different projects. Each board will have a customizable name and a Kanban-style layout for organizing tasks.",
+          "fields": [
+            "board name (e.g., 'Project Alpha')",
+            "visibility (public or private)"
+          ],
+          "layout": "Each board should support multiple columns (e.g., 'To Do', 'In Progress', 'Done') for organizing tasks."
+        },
+        "assign_users_to_boards": {
+          "description": "Admin users should be able to assign regular users to specific boards, allowing them to view and interact with the tasks within those boards.",
+          "role": "admin"
+        },
+        "drag_and_drop": {
+          "description": "Users should be able to drag tasks from one column to another to update the task status (e.g., from 'To Do' to 'In Progress'). This change should be reflected in real time for all users viewing the board.",
+          "functionality": "Drag-and-drop task movement across columns"
+        },
+        "board_settings": {
+          "description": "Admins will have the ability to customize board settings such as visibility (whether the board is private or public), task color-coding (to visually differentiate tasks based on priority), and the names of columns.",
+          "customizations": [
+            "board visibility (private/public)",
+            "task color-coding",
+            "column names"
+          ],
+          "role": "admin"
+        }
+      },
+      "tasks": {
+        "create_tasks": {
+          "description": "Users should be able to create tasks with detailed information such as title, description, assignee, due date, priority, and labels. Tasks should be assigned to specific boards and columns.",
+          "fields": [
+            "title (brief description of the task)",
+            "description (optional, detailed information)",
+            "assignee (the user responsible for the task)",
+            "due date (task completion deadline)",
+            "priority (Low, Medium, High)",
+            "labels (optional, used for categorizing tasks)"
+          ]
+        },
+        "edit_tasks": {
+          "description": "Users should be able to edit tasks they have created or that have been assigned to them. This includes updating the title, description, due date, priority, assignee, and task status.",
+          "fields": [
+            "title",
+            "description",
+            "assignee",
+            "due date",
+            "priority"
+          ]
+        },
+        "delete_tasks": {
+          "description": "Users can delete tasks they have created or tasks they no longer need. Admin users should be able to delete any task across the system.",
+          "permission": "tasks can be deleted by the creator or admin"
+        },
+        "comments": {
+          "description": "Each task should have a comment section where users can leave feedback, ask questions, or provide additional information about the task. These comments will be visible to all users assigned to the task.",
+          "enabled": true
+        },
+        "task_history": {
+          "description": "Each task will maintain a history of changes made to it, including modifications to the title, description, due date, assignee, and comments. This history will help users track the task’s progress and any important updates.",
+          "track_changes": true
+        }
+      },
+      "notifications": {
+        "task_updates": {
+          "description": "Users should receive notifications when important changes occur to tasks they are assigned to. This includes task assignments, updates, and comments.",
+          "events": [
+            "Task assigned",
+            "Task updated (e.g., status change, due date change)",
+            "Task commented on"
+          ],
+          "method": "Email notifications"
+        },
+        "board_updates": {
+          "description": "Admins should receive notifications when users are added to boards, ensuring that they are informed of any team changes.",
+          "events": [
+            "New user added to a board"
+          ],
+          "method": "Email notifications",
+          "role": "admin"
+        }
+      },
+      "team_management": {
+        "user_profiles": {
+          "description": "Each user will have a profile containing their username, profile picture, and a list of tasks they are currently assigned to. This information helps team members identify who is working on which tasks.",
+          "fields": [
+            "username",
+            "profile picture",
+            "assigned tasks (list of tasks assigned to the user)"
+          ]
+        },
+        "invite_users": {
+          "description": "Admins can invite new users to join the platform by entering their email addresses. An invitation email will be sent, allowing the user to register and start participating in projects.",
+          "method": "Email invitation",
+          "role": "admin"
+        },
+        "user_list": {
+          "description": "Admins will be able to view a list of all users, their roles, and the boards they are part of. This will help admins manage team members and assign them to relevant boards.",
+          "view_permission": "admin"
+        }
+      },
+      "search_and_filtering": {
+        "task_search": {
+          "description": "Users will be able to search for tasks across all boards based on various attributes such as title, description, assignee, due date, and priority.",
+          "filters": [
+            "title",
+            "description",
+            "priority",
+            "due date",
+            "assignee",
+            "labels"
+          ]
+        },
+        "board_filter": {
+          "description": "Users can filter tasks within a board by status (e.g., 'To Do', 'In Progress', 'Done'), priority, or assignee, helping them focus on the most important tasks.",
+          "filters": [
+            "status",
+            "priority",
+            "assignee"
+          ]
+        },
+        "advanced_search": {
+          "description": "The system will allow users to perform complex searches by combining multiple filters, making it easier to locate specific tasks.",
+          "filters": [
+            "multiple filter combinations (e.g., tasks assigned to a user with a 'High' priority)"
+          ]
+        }
+      }
+    },
+    "non_functional_requirements": {
+      "performance": {
+        "description": "The system must be able to handle up to 1000 active users concurrently, providing a responsive and smooth experience even under heavy load.",
+        "active_users": 1000,
+        "task_creation_latency": "should not exceed 2 seconds"
+      },
+      "scalability": {
+        "description": "The platform should be designed to scale horizontally to accommodate an increasing number of users and tasks without significant performance degradation.",
+        "horizontal_scaling": true
+      },
+      "security": {
+        "description": "User data must be securely stored and transmitted, using encryption methods to protect sensitive information like passwords. API endpoints must be secured with proper authentication and authorization mechanisms.",
+        "password_encryption": "bcrypt (for secure password storage)",
+        "api_security": "authenticated and authorized endpoints only",
+        "data_exposure": "no sensitive data should be exposed to the client"
+      },
+      "responsiveness": {
+        "description": "The application should be fully responsive, meaning it should work seamlessly on both desktop and mobile devices. The user interface should adapt to different screen sizes and resolutions.",
+        "devices": [
+          "desktop",
+          "mobile"
+        ]
+      },
+      "data_backup_and_recovery": {
+        "description": "The system should regularly back up data and have an easy-to-use disaster recovery process in place to ensure data integrity and availability in case of failure.",
+        "backup_frequency": "daily",
+        "restore_process": "simple and automated disaster recovery"
+      }
+    },
+    "tech_stack": {
+      "frontend": {
+        "framework": "React.js or Vue.js",
+        "state_management": "Redux or Vuex",
+        "ui_library": "Tailwind CSS (for rapid styling)",
+        "real_time_updates": "WebSockets (for real-time task updates)"
+      },
+      "backend": {
+        "framework": "Django with Django REST Framework (for the API) or Node.js with Express",
+        "database": "PostgreSQL or MySQL",
+        "authentication": "JWT (for session management)",
+        "websockets": true,
+        "testing": "Pytest (Django) or Jest (Node.js)"
+      },
+      "version_control": {
+        "system": "Git",
+        "repository_hosting": "GitHub or GitLab",
+        "workflow": "GitFlow or GitHub Flow (for managing feature branches and releases)"
+      },
+      "ci_cd": {
+        "tool": "GitHub Actions or GitLab CI/CD",
+        "deployment_platform": "AWS or Heroku"
+      }
+    },
+    "development_workflow": {
+      "task_breakdown": {
+        "description": "All tasks will be broken down into smaller user stories and tracked using GitHub Issues or a similar tool. Each task will include a description, acceptance criteria, and priority level (e.g., high, medium, low).",
+        "method": "GitHub Issues",
+        "task_type": "feature, bug fix, improvement",
+        "description": "clear, with acceptance criteria and priority"
+      },
+      "sprint_planning": {
+        "description": "Tasks will be organized into two-week sprints, with a planning meeting at the start of each sprint to prioritize tasks. At the end of the sprint, a retrospective will review what went well and what needs improvement.",
+        "sprint_length": "2 weeks",
+        "tasks_per_sprint": "based on team velocity and task complexity"
+      },
+      "code_reviews": {
+        "description": "Each piece of code should undergo a peer review process to ensure quality and maintainability. This process will include reviewing the code for functionality, readability, and adherence to coding standards.",
+        "process": "peer review before merging",
+        "requirements": [
+          "Unit tests (for testing individual components)",
+          "Documentation (to explain complex or important pieces of code)"
+        ]
+      }
+    },
+    "milestones": [
+      {
+        "name": "Milestone 1: Setup and Basic UI",
+        "tasks": [
+          "Initialize project repository and set up Git for version control.",
+          "Create basic UI for registration, login, and dashboard pages.",
+          "Ensure responsive layout for desktop and mobile views."
+        ]
+      },
+      {
+        "name": "Milestone 2: User Authentication",
+        "tasks": [
+          "Implement user registration and login functionality.",
+          "Set up JWT for session management.",
+          "Implement role-based access control (admin/user roles)."
+        ]
+      },
+      {
+        "name": "Milestone 3: Boards and Tasks",
+        "tasks": [
+          "Implement functionality for creating and managing boards.",
+          "Implement task creation and assignment.",
+          "Implement drag-and-drop task movement between columns (Kanban layout)."
+        ]
+      },
+      {
+        "name": "Milestone 4: Task Features",
+        "tasks": [
+          "Implement task editing (title, description, assignee, due date).",
+          "Add comment functionality to tasks.",
+          "Implement task history tracking (changes to tasks)."
+        ]
+      },
+      {
+        "name": "Milestone 5: Advanced Features",
+        "tasks": [
+          "Implement task search and filtering functionality.",
+          "Enable user management (profile creation, user list).",
+          "Add notification system for task and board updates."
+        ]
+      },
+      {
+        "name": "Milestone 6: Testing and Deployment",
+        "tasks": [
+          "Write unit and integration tests for frontend and backend.",
+          "Set up CI/CD pipeline for automated testing and deployment.",
+          "Deploy application to cloud platform (AWS, Heroku)."
+        ]
+      }
+    ]
+  }
+  
